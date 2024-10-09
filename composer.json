@@ -1,0 +1,52 @@
+{
+    "name": "tomatophp/filament-blog",
+    "type": "library",
+    "description": "Frontend for CMS Builder to build a blog and personal websites",
+    "keywords": [
+        "php",
+        "laravel",
+        "blog",
+        "cms",
+        "cms-builder",
+        "filamentphp",
+        "filament-plugin"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "TomatoPHP\\FilamentBlog\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TomatoPHP\\FilamentBlog\\FilamentBlogServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Fady Mondy",
+            "email": "info@3x1.io"
+        }
+    ],
+    "require": {
+        "php": "^8.1|^8.2",
+        "tomatophp/console-helpers": "^1.1",
+        "filament/filament": "^3.2",
+        "mallardduck/blade-boxicons": "^2.4",
+        "spatie/laravel-markdown": "^2.5",
+        "tomatophp/filament-accounts": "^2.1",
+        "tomatophp/filament-cms": "^1.0",
+        "tomatophp/filament-menus": "*",
+        "tomatophp/filament-plugins": "^1.1",
+        "tomatophp/filament-seo": "*",
+        "tomatophp/filament-settings-hub": "*",
+        "tomatophp/filament-types": "^1.0"
+    }
+}

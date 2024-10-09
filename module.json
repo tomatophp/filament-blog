@@ -1,0 +1,29 @@
+{
+    "name": "FilamentBlog",
+    "alias": "filament-blog",
+    "description": {
+        "ar": "Frontend for CMS Builder to build a blog and personal websites",
+        "en": "Frontend for CMS Builder to build a blog and personal websites",
+        "gr": "Frontend for CMS Builder to build a blog and personal websites",
+        "sp": "Frontend for CMS Builder to build a blog and personal websites"
+    },
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "TomatoPHP\\FilamentBlog\\FilamentBlogServiceProvider"
+    ],
+    "files": [],
+    "title": {
+        "ar": "Blog Template",
+        "en": "Blog Template",
+        "gr": "Blog Template",
+        "sp": "Blog Template"
+    },
+    "color": "#C35831",
+    "icon": "heroicon-c-newspaper",
+    "placeholder": "placeholder.webp",
+    "type": "plugin",
+    "version": "v1.0",
+    "github" : "https://github.com/tomatophp/filament-blog",
+    "docs" : "https://github.com/tomatophp/filament-blog"
+}
