@@ -47,6 +47,16 @@ Frontend for CMS Builder to build a blog and personal websites
 composer require tomatophp/filament-blog
 ```
 
+we need to publish some migrations for settings and media
+
+```bash
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
+```
+
+```bash
+php artisan vendor:publish --provider="Spatie\LaravelSettings\LaravelSettingsServiceProvider" --tag="migrations"
+```
+
 if you are using this package as a plugin please register the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
 
 ```php
