@@ -140,6 +140,9 @@ class FilamentBlogInstall extends Command
 
 
         $this->info('Clean Up');
+        $this->artisanCommand(['filament-settings-hub:install']);
+        $this->artisanCommand(['filament-cms:install']);
+        $this->artisanCommand(['filament-accounts:install']);
         $this->artisanCommand(['optimize']);
         $this->artisanCommand(['filament:optimize-clear']);
         $this->artisanCommand(['icon:cache']);
