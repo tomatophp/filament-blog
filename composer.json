@@ -44,7 +44,6 @@
         "tomatophp/filament-accounts": "^2.1",
         "tomatophp/filament-cms": "^1.0",
         "tomatophp/filament-menus": "*",
-        "tomatophp/filament-plugins": "^1.1",
         "tomatophp/filament-seo": "*",
         "tomatophp/filament-settings-hub": "*",
         "tomatophp/filament-types": "^1.0"
