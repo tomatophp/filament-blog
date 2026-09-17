@@ -4,7 +4,7 @@
             <img alt="{{ $post->title }}" src="{{ $post->getFirstMediaUrl('feature_image') }}" class="object-cover object-center">
         </div>
         <div class="p-4">
-            <a href="{{ url(app()->getLocale() .'/portfolios/'. $post->slug) }}" class="flex items-center justify-between gap-4 text-base font-medium">
+            <a href="{{ \TomatoPHP\FilamentBlog\FilamentBlog::url('portfolios/' . $post->slug) }}" class="flex items-center justify-between gap-4 text-base font-medium">
                 <h3>
                 <span  title="{{ $post->title }}" aria-label="{{ $post->title }}" class="font-bold font-display text-xl text-black dark:text-gray-200">
                     <span aria-hidden="true" class="absolute inset-0"></span>

@@ -16,8 +16,7 @@ class SubButton extends Component
         public ?string $icon = null,
         public ?string $url = null,
         public ?bool $away = false,
-    )
-    {
+    ) {
         //
     }
 

@@ -5,7 +5,6 @@ namespace TomatoPHP\FilamentBlog\View\Components;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
-use TomatoPHP\FilamentCms\Models\Post;
 
 class EmptyState extends Component
 {
@@ -14,8 +13,7 @@ class EmptyState extends Component
      */
     public function __construct(
         public string $name,
-    )
-    {
+    ) {
         //
     }
 

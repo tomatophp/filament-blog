@@ -15,8 +15,7 @@ class MenuItem extends Component
         public string $label,
         public ?string $url = null,
         public ?string $target = null,
-    )
-    {
+    ) {
         //
     }
 

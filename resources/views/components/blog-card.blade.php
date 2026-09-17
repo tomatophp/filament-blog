@@ -3,7 +3,7 @@
         <div>
             <header>
                 <h2 class="text-3xl sm:text-4xl font-bold leading-snug mb-2 font-heading">
-                    <a class="hover:underline hover:underline-offset-4 hover:decoration-3" href="{{ url(app()->getLocale() .'/blog/'. $post->slug) }}">
+                    <a class="hover:underline hover:underline-offset-4 hover:decoration-3" href="{{ \TomatoPHP\FilamentBlog\FilamentBlog::url('blog/' . $post->slug) }}">
                         {!! $post->title !!}
                     </a>
                 </h2>

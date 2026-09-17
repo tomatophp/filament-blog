@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('account_logs')) {
+            return;
+        }
+
         Schema::create('account_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('account_id')->constrained('accounts')->onDelete('cascade');
+            $table->foreignId('account_id')->constrained('accounts')->cascadeOnDelete();
 
             $table->string('action')->default('comment')->nullable();
             $table->json('log');

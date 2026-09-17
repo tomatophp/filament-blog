@@ -2,9 +2,8 @@
 
 namespace TomatoPHP\FilamentBlog\Filament\Resources\LikeResource\Pages;
 
-use TomatoPHP\FilamentBlog\Filament\Resources\LikeResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
+use TomatoPHP\FilamentBlog\Filament\Resources\LikeResource;
 
 class ManageLikes extends ManageRecords
 {

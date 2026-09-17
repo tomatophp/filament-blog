@@ -1,0 +1,47 @@
+@import "tailwindcss";
+@import "./style.css" layer(components);
+@import "./github-dark.min.css" layer(components);
+
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms";
+
+@source "../../../vendor/tomatophp/filament-blog/resources/views/**/*.blade.php";
+@source "../../views/vendor/filament-blog/**/*.blade.php";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+    --font-main: "IBM Plex Sans Arabic", sans-serif;
+
+    --color-main-50: var(--color-rose-50);
+    --color-main-100: var(--color-rose-100);
+    --color-main-200: var(--color-rose-200);
+    --color-main-300: var(--color-rose-300);
+    --color-main-400: var(--color-rose-400);
+    --color-main-500: var(--color-rose-500);
+    --color-main-600: var(--color-rose-600);
+    --color-main-700: var(--color-rose-700);
+    --color-main-800: var(--color-rose-800);
+    --color-main-900: var(--color-rose-900);
+    --color-main-950: var(--color-rose-950);
+
+    --color-secondary-500: var(--color-green-500);
+    --color-secondary-600: var(--color-green-600);
+
+    --color-primary-50: var(--primary-50);
+    --color-primary-100: var(--primary-100);
+    --color-primary-200: var(--primary-200);
+    --color-primary-300: var(--primary-300);
+    --color-primary-400: var(--primary-400);
+    --color-primary-500: var(--primary-500);
+    --color-primary-600: var(--primary-600);
+    --color-primary-700: var(--primary-700);
+    --color-primary-800: var(--primary-800);
+    --color-primary-900: var(--primary-900);
+    --color-primary-950: var(--primary-950);
+
+    --color-danger-500: var(--danger-500);
+    --color-success-500: var(--success-500);
+    --color-warning-500: var(--warning-500);
+    --color-info-500: var(--info-500);
+}

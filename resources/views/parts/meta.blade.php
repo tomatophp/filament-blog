@@ -29,5 +29,5 @@
 <meta name="twitter:creator" content="@engfadymondy">
 
 
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","name":"@yield('title', app()->getLocale() === 'en' ? str(setting('site_name'))->explode('|')[0]??setting('site_name') : str(setting('site_name'))->explode('|')[1]??setting('site_name'))"}</script>
+<script type="application/ld+json">{"@@context":"https://schema.org","@@type":"Article","name":"@yield('title', app()->getLocale() === 'en' ? str(setting('site_name'))->explode('|')[0]??setting('site_name') : str(setting('site_name'))->explode('|')[1]??setting('site_name'))"}</script>
 

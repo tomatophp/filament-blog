@@ -2,27 +2,29 @@
 
 namespace TomatoPHP\FilamentBlog\Filament\Resources;
 
-use TomatoPHP\FilamentBlog\Filament\Resources\CommentResource\Pages;
-use TomatoPHP\FilamentBlog\Filament\Resources\CommentResource\RelationManagers;
-use App\Models\Account;
-use TomatoPHP\FilamentBlog\Models\Like;
-use Filament\Forms;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use TomatoPHP\FilamentCms\Models\Comment;
-use TomatoPHP\FilamentTypes\Components\TypeColumn;
+use TomatoPHP\FilamentBlog\Filament\Resources\CommentResource\Pages\ManageComments;
+use TomatoPHP\FilamentBlog\FilamentBlog;
+use TomatoPHP\FilamentBlog\Models\Comment;
+use TomatoPHP\FilamentCms\Models\Post;
 
 class CommentResource extends Resource
 {
     protected static ?string $model = Comment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
-
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     public static function getNavigationLabel(): string
     {
@@ -31,66 +33,75 @@ class CommentResource extends Resource
 
     public static function getPluralLabel(): ?string
     {
-        return  trans('filament-blog::messages.comments.title');
+        return trans('filament-blog::messages.comments.title');
     }
 
     public static function getLabel(): ?string
     {
-        return  trans('filament-blog::messages.comments.single');
+        return trans('filament-blog::messages.comments.single');
     }
 
-    public static function form(Form $form): Form
+    /**
+     * Accounts only see their own comments.
+     */
+    public static function getEloquentQuery(): Builder
     {
-        return $form->schema([
+        $account = FilamentBlog::account();
+
+        return parent::getEloquentQuery()
+            ->when(
+                $account,
+                fn (Builder $query) => $query
+                    ->where('user_id', $account->getKey())
+                    ->where('user_type', $account->getMorphClass()),
+                fn (Builder $query) => $query->whereRaw('1 = 0'),
+            );
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema->components([
             MarkdownEditor::make('comment')
                 ->label(trans('filament-blog::messages.comments.comment'))
                 ->columnSpanFull()
-                ->required()
+                ->required(),
         ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                $query->where('user_id', auth('accounts')->user()->id)
-                    ->where('user_type', Account::class);
-            })
             ->columns([
-                Tables\Columns\TextColumn::make('content.title')
+                TextColumn::make('content.title')
                     ->label(trans('filament-blog::messages.comments.post'))
-                    ->url(fn($record) => $record->content->type === 'open-source' ? url(app()->getLocale() . '/open-source/' . $record->content->slug) : url(app()->getLocale() . '/blog/' . $record->content->slug))
-                    ->openUrlInNewTab()
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('comment')
+                    ->url(fn (Comment $record): ?string => $record->content instanceof Post ? FilamentBlog::postUrl($record->content) : null)
+                    ->openUrlInNewTab(),
+                TextColumn::make('comment')
                     ->label(trans('filament-blog::messages.comments.comment'))
-                    ->state(fn($record) => str($record->comment)->limit(50))
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('is_active')
+                    ->limit(50)
+                    ->searchable(),
+                IconColumn::make('is_active')
                     ->label(trans('filament-blog::messages.comments.comment'))
                     ->boolean()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
+            ->defaultSort('created_at', 'desc')
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
-            ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -98,7 +109,7 @@ class CommentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageComments::route('/'),
+            'index' => ManageComments::route('/'),
         ];
     }
 }

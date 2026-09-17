@@ -10,6 +10,9 @@ use TomatoPHP\FilamentMenus\FilamentMenusPlugin;
 use TomatoPHP\FilamentSeo\FilamentSeoPlugin;
 use TomatoPHP\FilamentSettingsHub\FilamentSettingsHubPlugin;
 
+/**
+ * Admin panel plugin: registers the CMS, settings, SEO, menus and accounts plugins the frontend is built on.
+ */
 class FilamentBlogPlugin implements Plugin
 {
     public function getId(): string
@@ -17,29 +20,26 @@ class FilamentBlogPlugin implements Plugin
         return 'filament-blog';
     }
 
+    /**
+     * Plugins the panel already registered keep their own configuration; only missing ones are added.
+     */
     public function register(Panel $panel): void
     {
-        $panel->plugin(
-            FilamentCMSPlugin::make()
-        );
+        $plugins = [
+            'filament-cms' => fn (): Plugin => FilamentCMSPlugin::make(),
+            'filament-settings-hub' => fn (): Plugin => FilamentSettingsHubPlugin::make(),
+            'filament-seo' => fn (): Plugin => FilamentSeoPlugin::make(),
+            'filament-menus' => fn (): Plugin => FilamentMenusPlugin::make(),
+            'filament-accounts' => fn (): Plugin => FilamentAccountsPlugin::make()->canLogin()->canBlocked(),
+        ];
 
-        $panel->plugin(
-            FilamentSettingsHubPlugin::make()
-        );
+        foreach ($plugins as $plugin) {
+            $plugin = $plugin();
 
-        $panel->plugin(
-            FilamentSeoPlugin::make()
-        );
-
-        $panel->plugin(
-            FilamentMenusPlugin::make()
-        );
-
-        $panel->plugin(
-            FilamentAccountsPlugin::make()
-                ->canLogin()
-                ->canBlocked()
-        );
+            if (! $panel->hasPlugin($plugin->getId())) {
+                $panel->plugin($plugin);
+            }
+        }
     }
 
     public function boot(Panel $panel): void
@@ -49,6 +49,6 @@ class FilamentBlogPlugin implements Plugin
 
     public static function make(): static
     {
-        return new static();
+        return app(static::class);
     }
 }

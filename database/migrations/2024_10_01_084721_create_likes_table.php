@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('likes')) {
+            return;
+        }
+
         Schema::create('likes', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('account_id')->constrained()->onDelete('cascade');
-            $table->foreignId('post_id')->constrained()->onDelete('cascade');
+            $table->foreignId('account_id')->constrained('accounts')->cascadeOnDelete();
+            $table->foreignId('post_id')->constrained('posts')->cascadeOnDelete();
 
             $table->timestamps();
         });

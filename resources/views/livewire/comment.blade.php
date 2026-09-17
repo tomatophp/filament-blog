@@ -1,6 +1,12 @@
 <div class="flex flex-col gap-4  mx-8 sm:w-1/2 sm:mx-auto">
     @php
-        $comments = $this->post->comments()->where('is_active', 1)->orderBy('created_at', 'desc')->paginate(20);
+        $comments = \TomatoPHP\FilamentBlog\Models\Comment::query()
+            ->whereMorphedTo('content', $this->post)
+            ->where('is_active', 1)
+            ->with('user')
+            ->latest()
+            ->paginate(20);
+        $account = \TomatoPHP\FilamentBlog\FilamentBlog::account();
     @endphp
     @if(count($comments))
         <h2 class="text-2xl font-bold">{{ trans('filament-blog::messages.comments.title') }}</h2>
@@ -9,7 +15,7 @@
                 <div  class="flex flex-col bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-800 shadow-sm">
                     <div class="p-4">
                         <section data-theme="light" class="prose prose-lg lg:prose-xl dark:prose-invert dark:prose-headings:text-slate-300 prose-headings:font-heading prose-headings:leading-tighter prose-headings:tracking-tighter prose-headings:font-bold prose-img:rounded-md prose-img:shadow-lg prose-a:text-black/75 dark:prose-a:text-white/90 prose-a:underline prose-a:underline-offset-4 prose-a:decoration-primary-500 hover:prose-a:decoration-primary-600 prose-a:decoration-2 hover:prose-a:decoration-4 hover:prose-a:text-black dark:hover:prose-a:text-white break-words tracking-normal prose-h4:tracking-normal prose-h5:tracking-normal prose-h6:tracking-normal prose-code:before:hidden prose-code:after:hidden markdown-body">
-                            {!! str($comment->comment)->markdown() !!}
+                            {!! str($comment->comment)->markdown(['html_input' => 'strip', 'allow_unsafe_links' => false]) !!}
                         </section>
                     </div>
                     <div class="flex justify-between border-t border-gray-200 dark:border-slate-800  p-4">
@@ -23,14 +29,14 @@
                                 <div class="text-sm text-gray-400">{{ $comment->created_at->diffForHumans() }}</div>
                             </div>
                         </a>
-                        @if(auth('accounts')->user() && auth('accounts')->user()->id === $comment->user_id)
+                        @if($account && $comment->user_type === $account->getMorphClass() && (int) $comment->user_id === (int) $account->getKey())
                             <div class="flex flex-col justify-center items-center">
                                 <div class="flex justify-end gap-4">
                                     <div>
-                                        {{ ($this->editAction)(['comment' => $comment]) }}
+                                        {{ ($this->editAction)(['comment' => $comment->getKey()]) }}
                                     </div>
                                     <div>
-                                        {{ ($this->deleteAction)(['comment' => $comment]) }}
+                                        {{ ($this->deleteAction)(['comment' => $comment->getKey()]) }}
                                     </div>
                                 </div>
                             </div>
@@ -45,7 +51,7 @@
 
 
 
-    @if(auth('accounts')->user())
+    @if($account)
         <div>
             {{ $this->form }}
         </div>
@@ -54,7 +60,7 @@
             {{ $this->sendAction }}
         </div>
     @else
-        <h1 class="text-center"><x-filament::link class="text-3xl" href="{{ url('user') }}">{{ trans('filament-blog::messages.comments.login') }}</x-filament::link> {{ trans('filament-blog::messages.comments.leave') }}</h1>
+        <h1 class="text-center"><x-filament::link class="text-3xl" href="{{ url(config('filament-blog.user-panel') . '/login') }}">{{ trans('filament-blog::messages.comments.login') }}</x-filament::link> {{ trans('filament-blog::messages.comments.leave') }}</h1>
     @endif
 
     <x-filament-actions::modals />

@@ -10,25 +10,25 @@ Frontend for CMS Builder to build a blog and personal websites
 
 ## Screenshots
 
-![Home](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/home.png)
-![Blog](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/blog.png)
-![Post](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/post.png)
-![Like & Comments](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/share-comments.png)
-![Open Source](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/open-source.png)
-![Portfolios](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/portfolios.png)
-![Services](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/services.png)
-![Contact](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/contact.png)
-![User Dashboard](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/user-dashboard.png)
-![Comments](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/comments.png)
-![Likes](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/likes.png)
-
+![Home](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/home-light.png)
+![Home Dark](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/home-dark.png)
+![Blog](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/blog-light.png)
+![Blog Dark](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/blog-dark.png)
+![Post with likes and comments](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/post-light.png)
+![Post with likes and comments Dark](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/post-dark.png)
+![Open Source](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/open-source-light.png)
+![Open Source Dark](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/open-source-dark.png)
+![Portfolios](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/portfolios-light.png)
+![Portfolios Dark](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/portfolios-dark.png)
+![Admin posts](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/admin-posts-light.png)
+![Admin posts Dark](https://raw.githubusercontent.com/tomatophp/filament-blog/master/arts/admin-posts-dark.png)
 
 ## Features
 
 - [x] Tailwind CSS Blog Template
 - [x] Blog
-- [x] Open Source integration with GitHub / Composer
-- [x] Portfolios integration with Behanace
+- [x] Open Source projects
+- [x] Portfolios
 - [x] Services
 - [x] Contact Us
 - [x] User Dashboard
@@ -41,213 +41,126 @@ Frontend for CMS Builder to build a blog and personal websites
 - [ ] RSS Feed
 - [ ] Sitemap
 
+## Compatibility
+
+| Filament Blog | Filament | Laravel | PHP  |
+|---------------|----------|---------|------|
+| 5.x           | 5.x      | 12 / 13 | 8.2+ |
+| 1.x           | 3.x      | 10 / 11 | 8.1+ |
+
+The frontend is built on [filament-cms](https://github.com/tomatophp/filament-cms), [filament-accounts](https://github.com/tomatophp/filament-accounts), [filament-menus](https://github.com/tomatophp/filament-menus), [filament-seo](https://github.com/tomatophp/filament-seo), [filament-settings-hub](https://github.com/tomatophp/filament-settings-hub) and [filament-types](https://github.com/tomatophp/filament-types) (all `^5.0`), they are installed with this package.
+
 ## Installation
 
 ```bash
 composer require tomatophp/filament-blog
 ```
 
-we need to publish some migrations for settings and media
+publish the media library migration (used by the CMS and accounts)
 
 ```bash
 php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
 ```
 
-```bash
-php artisan vendor:publish --provider="Spatie\LaravelSettings\LaravelSettingsServiceProvider" --tag="migrations"
-```
-
-if you are using this package as a plugin please register the plugin on `/app/Providers/Filament/AdminPanelProvider.php`
-
-```php
-->plugin(\TomatoPHP\FilamentBlog\FilamentBlogPlugin::make())
-```
-
-now you need to create a user panel you can follow instructions on [filament-accounts](https://www.github.com/tomatophp/filament-accounts)
-
-let's start by create a new panel
-
-```bash
-php artisan filament:panel app
-```
-
-if you need to change the panel name you can change it on config file `filament-blog.php`
-
-```php
-
-return [
-    "user-panel" => "app"
-];
-```
-
-inside the new panel add this plugin
-
-```php
-->plugin(
-    FilamentBlogUserPanelPlugin::make()
-)
-```
-
-and if you don't set the full user panel use it like this
-
-```php
-->plugin(
-    FilamentAccountsSaaSPlugin::make()
-        ->editProfile()
-        ->editProfileMenu()
-        ->APITokenManager()
-        ->browserSesstionManager()
-        ->deleteAccount()
-        ->editPassword()
-        ->registration()
-        ->checkAccountStatusInLogin()
-)
-```
-
-you need to publish `Account` Model
-
-```bash
-php artisan vendor:publish --tag="filament-accounts-model"
-```
-
-and on your `auth.php` add a `accounts` guard
-
-```php
-<?php
-
-return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Defaults
-    |--------------------------------------------------------------------------
-    |
-    | This option defines the default authentication "guard" and password
-    | reset "broker" for your application. You may change these values
-    | as required, but they're a perfect start for most applications.
-    |
-    */
-
-    'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Guards
-    |--------------------------------------------------------------------------
-    |
-    | Next, you may define every authentication guard for your application.
-    | Of course, a great default configuration has been defined for you
-    | which utilizes session storage plus the Eloquent user provider.
-    |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
-    |
-    | Supported: "session"
-    |
-    */
-
-    'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
-        'accounts' => [
-            'driver' => 'session',
-            'provider' => 'accounts',
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | User Providers
-    |--------------------------------------------------------------------------
-    |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
-    |
-    | If you have multiple user tables or models you may configure multiple
-    | providers to represent the model / table. These providers may then
-    | be assigned to any extra authentication guards you have defined.
-    |
-    | Supported: "database", "eloquent"
-    |
-    */
-
-    'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
-        ],
-        'accounts' => [
-            'driver' => 'eloquent',
-            'model' => \App\Models\Account::class,
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Resetting Passwords
-    |--------------------------------------------------------------------------
-    |
-    | These configuration options specify the behavior of Laravel's password
-    | reset functionality, including the table utilized for token storage
-    | and the user provider that is invoked to actually retrieve users.
-    |
-    | The expiry time is the number of minutes that each reset token will be
-    | considered valid. This security feature keeps tokens short-lived so
-    | they have less time to be guessed. You may change this as needed.
-    |
-    | The throttle setting is the number of seconds a user must wait before
-    | generating more password reset tokens. This prevents the user from
-    | quickly generating a very large amount of password reset tokens.
-    |
-    */
-
-    'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Password Confirmation Timeout
-    |--------------------------------------------------------------------------
-    |
-    | Here you may define the amount of seconds before a password confirmation
-    | window expires and users are asked to re-enter their password via the
-    | confirmation screen. By default, the timeout lasts for three hours.
-    |
-    */
-
-    'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
-
-];
-```
-
-now it's time to install
+now run the install command, it runs the install commands of the packages above, migrates, publishes the frontend assets and creates the header menu
 
 ```bash
 php artisan filament-blog:install
 ```
 
-after install please run npm
+the command never overwrites your `package.json`, `vite.config.js` or `resources/css/app.css`. Add the blog stylesheet to your Vite input and build it
 
-```bash
-npm i && npm run build
+```js
+// vite.config.js
+laravel({
+    input: [
+        'resources/css/app.css',
+        'resources/js/app.js',
+        'resources/css/filament-blog/app.css',
+    ],
+    refresh: true,
+}),
 ```
 
-you need to clean up your `web.php` routes file and make sure that the `/` route does not point anywhere.
+```bash
+npm i -D @tailwindcss/typography @tailwindcss/forms
+npm run build
+```
 
-now you can visit your website and you will see the blog
+pages still render before the build, they only miss the styles.
+
+### Admin panel
+
+register the plugin on `app/Providers/Filament/AdminPanelProvider.php`, it also registers the CMS, settings hub, SEO, menus and accounts plugins (a plugin you already registered on the panel keeps your own configuration)
+
+```php
+->plugin(\TomatoPHP\FilamentBlog\FilamentBlogPlugin::make())
+```
+
+### User panel
+
+visitors sign in to like and comment. Create a panel for them
+
+```bash
+php artisan filament:panel app
+```
+
+and use the `accounts` guard with the blog user panel plugin (comments, likes and a stats widget)
+
+```php
+use TomatoPHP\FilamentBlog\FilamentBlogUserPanelPlugin;
+
+$panel
+    ->id('app')
+    ->path('app')
+    ->login()
+    ->registration()
+    ->authGuard('accounts')
+    ->plugin(FilamentBlogUserPanelPlugin::make());
+```
+
+outside the `local` environment Filament only lets models that implement `FilamentUser` into a panel, so publish the account model (`php artisan vendor:publish --tag="filament-accounts-model"`, then set `filament-accounts.model`) and allow the user panel only
+
+```php
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+
+class Account extends Authenticatable implements FilamentUser, HasAvatar, HasMedia
+{
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $panel->getId() === 'app' && $this->is_active;
+    }
+}
+```
+
+the `accounts` guard is registered by the package with the `filament-accounts.model` model (`TomatoPHP\FilamentAccounts\Models\Account` by default) when your `config/auth.php` does not define it, so you do not need to add it yourself. If you use another panel id, change `user-panel` in `config/filament-blog.php`.
+
+## Frontend routes
+
+the frontend is served per locale: `/en`, `/en/blog`, `/en/blog/{slug}`, `/en/open-source`, `/en/portfolios`, `/en/services`, `/en/contact` and CMS pages on `/en/{slug}`. `/` redirects to the default locale.
+
+Laravel apps ship a `/` route in `routes/web.php` and it wins over the blog redirect, so either remove it or mount the blog under a prefix
+
+```dotenv
+# serve the blog on /site/en/...
+FILAMENT_BLOG_PREFIX=site
+
+# or do not register the frontend routes at all
+FILAMENT_BLOG_ROUTES=false
+```
+
+```php
+// config/filament-blog.php
+'routes' => [
+    'enabled' => env('FILAMENT_BLOG_ROUTES', true),
+    'prefix' => env('FILAMENT_BLOG_PREFIX', ''),
+    'redirect_root' => true,
+    'middleware' => ['web'],
+],
+```
+
+the content comes from the CMS posts: type `post` for the blog, `open-source`, `portfolio`, `service` and `page`; only published posts are shown.
 
 ## Publish Assets
 
@@ -273,6 +186,24 @@ you can publish migrations file by use this command
 
 ```bash
 php artisan vendor:publish --tag="filament-blog-migrations"
+```
+
+you can publish the frontend css and js by use this command
+
+```bash
+php artisan vendor:publish --tag="filament-blog-assets"
+```
+
+## Upgrading from v1
+
+- comments now use `TomatoPHP\FilamentBlog\Models\Comment` on the same `comments` table, existing comments keep working.
+- the `InteractsWithBlog` trait on your account model is optional now; likes and comments go through `TomatoPHP\FilamentBlog\Services\Interactions`.
+- the stylesheet moved to `resources/css/filament-blog/app.css` (Tailwind v4), see the installation steps above.
+
+## Testing
+
+```bash
+composer test
 ```
 
 ## Other Filament Packages

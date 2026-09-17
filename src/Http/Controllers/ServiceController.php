@@ -2,29 +2,21 @@
 
 namespace TomatoPHP\FilamentBlog\Http\Controllers;
 
-use TomatoPHP\FilamentCms\Models\Post;
+use Illuminate\Contracts\View\View;
 
 class ServiceController extends Controller
 {
-    public function index()
+    public function index(): View
     {
-        $services = Post::query()
-            ->where('type', 'service')
-            ->where('is_published', 1)
-            ->orderBy('created_at', 'desc')
-            ->paginate(12);
         return view('filament-blog::services.index', [
-            'services' => $services
+            'services' => $this->published('service')->orderByDesc('created_at')->paginate(12),
         ]);
     }
 
-    public function show($service)
+    public function show(string $service): View
     {
-        $service = Post::query()->where('slug', $service)->first();
-        $service->views += 1;
-        $service->save();
         return view('filament-blog::services.show', [
-            "service" => $service
+            'service' => $this->findPublished('service', $service),
         ]);
     }
 }

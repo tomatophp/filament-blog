@@ -8,7 +8,7 @@
 
     <title>@yield('title')</title>
 
-    @vite('resources/css/app.css')
+    {{ \TomatoPHP\FilamentBlog\FilamentBlog::vite() }}
     @stack('css')
 </head>
 <body class="antialiased text-gray-900 dark:text-slate-300 tracking-tight bg-white dark:bg-slate-950">
@@ -17,7 +17,6 @@
         @yield('body')
     </main>
 
-    @vite('resources/js/app.js')
     @stack('js')
 </body>
 </html>

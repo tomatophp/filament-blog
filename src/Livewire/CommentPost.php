@@ -2,44 +2,51 @@
 
 namespace TomatoPHP\FilamentBlog\Livewire;
 
-use App\Models\Account;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
+use Illuminate\Contracts\View\View;
 use Livewire\Component;
-use TomatoPHP\FilamentCms\Filament\Resources\PostResource;
-use TomatoPHP\FilamentCms\Models\Comment;
+use TomatoPHP\FilamentBlog\FilamentBlog;
+use TomatoPHP\FilamentBlog\Models\Comment;
+use TomatoPHP\FilamentBlog\Services\Interactions;
 use TomatoPHP\FilamentCms\Models\Post;
 
-class CommentPost extends Component implements HasActions, HasForms
+/**
+ * @property-read Schema $form
+ */
+class CommentPost extends Component implements HasActions, HasSchemas
 {
-    use InteractsWithForms;
     use InteractsWithActions;
+    use InteractsWithSchemas;
 
-    public array $data = [];
-    public ?Post $post = null;
+    /**
+     * @var array<string, mixed>
+     */
+    public ?array $data = [];
 
-    public function mount(Post $post){
+    public Post $post;
+
+    public function mount(Post $post): void
+    {
         $this->post = $post;
-        $this->form->fill([
-            'comment' => ''
-        ]);
+        $this->form->fill(['comment' => '']);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
-            MarkdownEditor::make('comment')
-                ->label(trans('filament-blog::messages.comments.comment'))
-                ->required()
-        ])->statePath('data');
+        return $schema
+            ->components([
+                MarkdownEditor::make('comment')
+                    ->label(trans('filament-blog::messages.comments.comment'))
+                    ->required(),
+            ])
+            ->statePath('data');
     }
 
     public function editAction(): Action
@@ -50,21 +57,17 @@ class CommentPost extends Component implements HasActions, HasForms
             ->label(trans('filament-blog::messages.comments.edit'))
             ->color('warning')
             ->icon('heroicon-o-pencil')
-            ->fillForm(fn(array $arguments)=> $arguments['comment'])
-            ->form([
+            ->fillForm(fn (array $arguments): array => [
+                'comment' => $this->findOwnComment($arguments)?->comment,
+            ])
+            ->schema([
                 MarkdownEditor::make('comment')
                     ->label(trans('filament-blog::messages.comments.comment'))
-                    ->required()
+                    ->required(),
             ])
-            ->action(function(array $arguments, array $data){
-                $comment = Comment::query()
-                    ->where('id', $arguments['comment']['id'])
-                    ->where('user_type', Account::class)
-                    ->where('user_id', auth('accounts')->user()->id)
-                    ->first();
-
-                $comment->update([
-                    'comment' => $data['comment']
+            ->action(function (array $arguments, array $data): void {
+                $this->findOwnComment($arguments)?->update([
+                    'comment' => $data['comment'],
                 ]);
 
                 Notification::make()
@@ -75,7 +78,7 @@ class CommentPost extends Component implements HasActions, HasForms
             });
     }
 
-    public function deleteAction()
+    public function deleteAction(): Action
     {
         return Action::make('deleteAction')
             ->requiresConfirmation()
@@ -84,14 +87,8 @@ class CommentPost extends Component implements HasActions, HasForms
             ->label(trans('filament-blog::messages.comments.delete'))
             ->color('danger')
             ->icon('heroicon-o-trash')
-            ->action(function(array $arguments){
-                $comment = Comment::query()
-                    ->where('id', $arguments['comment']['id'])
-                    ->where('user_type', Account::class)
-                    ->where('user_id', auth('accounts')->user()->id)
-                    ->first();
-
-                $comment->delete();
+            ->action(function (array $arguments): void {
+                $this->findOwnComment($arguments)?->delete();
 
                 Notification::make()
                     ->title(trans('filament-blog::messages.comments.notifications.delete.title'))
@@ -101,53 +98,54 @@ class CommentPost extends Component implements HasActions, HasForms
             });
     }
 
-
     public function sendAction(): Action
     {
         return Action::make('sendAction')
             ->label(trans('filament-blog::messages.comments.send'))
-            ->action(function(){
-               $this->form->validate();
+            ->visible(fn (): bool => FilamentBlog::account() !== null)
+            ->action(function (): void {
+                $account = FilamentBlog::account();
 
-               $data = $this->form->getState();
-
-                $this->post->comments()->create([
-                     'comment' => $data['comment'],
-                     'user_id' => auth('accounts')->id(),
-                     'user_type' => Account::class,
-                    'is_active' => 1
-                ]);
-
-                auth('accounts')->user()->log($this->post, 'comment', $data['comment']);
-
-                $this->form->fill([
-                    'comment' => ''
-                ]);
-
-                if($this->post->author){
-                    Notification::make()
-                        ->title("New Comment")
-                        ->body(auth('accounts')->user()->name . " add a new comment has been added to your post")
-                        ->actions([
-                            \Filament\Notifications\Actions\Action::make('viewComment')
-                                ->label('View Comment')
-                                ->url(url('/admin/posts/' . $this->post->id . '/show'))
-                        ])
-                        ->success()
-                        ->sendToDatabase($this->post->author);
+                if (! $account) {
+                    return;
                 }
+
+                $data = $this->form->getState();
+
+                Interactions::comment($account, $this->post, (string) $data['comment']);
+
+                $this->form->fill(['comment' => '']);
 
                 Notification::make()
                     ->title(trans('filament-blog::messages.comments.notifications.create.title'))
                     ->body(trans('filament-blog::messages.comments.notifications.create.body'))
                     ->success()
                     ->send();
-
-                return redirect()->back();
             });
     }
 
-    public function render()
+    /**
+     * A comment on this post written by the signed in account.
+     *
+     * @param  array<string, mixed>  $arguments
+     */
+    protected function findOwnComment(array $arguments): ?Comment
+    {
+        $account = FilamentBlog::account();
+
+        if (! $account || ! isset($arguments['comment'])) {
+            return null;
+        }
+
+        return Comment::query()
+            ->whereKey($arguments['comment'])
+            ->whereMorphedTo('content', $this->post)
+            ->where('user_type', $account->getMorphClass())
+            ->where('user_id', $account->getKey())
+            ->first();
+    }
+
+    public function render(): View
     {
         return view('filament-blog::livewire.comment');
     }

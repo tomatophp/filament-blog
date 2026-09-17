@@ -1,6 +1,6 @@
 @php
-    if(!$away && !str($url)->contains(url('/'))){
-        $url = url(app()->getLocale() . '/' . $url);
+    if (! $away && ! str($url)->startsWith(['http://', 'https://', '//'])) {
+        $url = \TomatoPHP\FilamentBlog\FilamentBlog::url((string) $url);
     }
 @endphp
 

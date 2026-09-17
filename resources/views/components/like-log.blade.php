@@ -17,7 +17,7 @@
                             </div>
                         </a>
                         <h1 class="text-slate-600 dark:text-slate-400">Has Been Like Post </h1>
-                        <a href="{{ url(app()->getLocale() . '/' . ($log->model?->type === 'open-source' ? 'open-source' : 'blog') . '/' . $log->model?->slug) }}" target="_blank" >
+                        <a href="{{ $log->model ? \TomatoPHP\FilamentBlog\FilamentBlog::postUrl($log->model) : '#' }}" target="_blank" >
                             <div class="flex justify-start gap-2">
                                 <div>
                                     <h1 class="font-bold text-md">{{ $log->model?->title }}</h1>

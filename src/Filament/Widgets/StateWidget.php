@@ -2,30 +2,40 @@
 
 namespace TomatoPHP\FilamentBlog\Filament\Widgets;
 
-use Google\Service\Blogger\Resource\Posts;
-use TomatoPHP\FilamentBlog\Models\Like;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use TomatoPHP\FilamentCms\Models\Comment;
+use TomatoPHP\FilamentBlog\FilamentBlog;
+use TomatoPHP\FilamentBlog\Models\Comment;
+use TomatoPHP\FilamentBlog\Models\Like;
 use TomatoPHP\FilamentCms\Models\Post;
 
 class StateWidget extends BaseWidget
 {
-    protected static ?string $pollingInterval = null;
+    protected ?string $pollingInterval = null;
 
     protected function getStats(): array
     {
+        $account = FilamentBlog::account();
+        $accountId = $account?->getKey();
+        $accountType = $account?->getMorphClass();
+
         return [
-            Stat::make(trans('filament-blog::messages.widgets.demos'), Post::query()->where('user_id', auth('accounts')->user()->id)->where('user_type', config('filament-accounts.model'))->count())
-                ->chart(collect(range(1, 10))->map(fn ($item) => (float)rand(1,1000))->toArray())
+            Stat::make(
+                trans('filament-blog::messages.widgets.demos'),
+                Post::query()->where('author_id', $accountId)->where('author_type', $accountType)->count(),
+            )
                 ->color('info')
                 ->icon('heroicon-o-globe-alt'),
-            Stat::make(trans('filament-blog::messages.widgets.likes'), Like::query()->where('account_id', auth('accounts')->user()->id)->count())
-                ->chart(collect(range(1, 10))->map(fn ($item) => (float)rand(1,1000))->toArray())
+            Stat::make(
+                trans('filament-blog::messages.widgets.likes'),
+                Like::query()->where('account_id', $accountId)->count(),
+            )
                 ->color('danger')
                 ->icon('heroicon-o-heart'),
-            Stat::make(trans('filament-blog::messages.widgets.comments'), Comment::query()->where('user_id', auth('accounts')->user()->id)->count())
-                ->chart(collect(range(1, 10))->map(fn ($item) => (float)rand(1,1000))->toArray())
+            Stat::make(
+                trans('filament-blog::messages.widgets.comments'),
+                Comment::query()->where('user_id', $accountId)->where('user_type', $accountType)->count(),
+            )
                 ->color('warning')
                 ->icon('heroicon-o-chat-bubble-left-right'),
         ];

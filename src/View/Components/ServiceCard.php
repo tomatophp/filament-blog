@@ -18,8 +18,7 @@ class ServiceCard extends Component
         public ?string $image = null,
         public ?array $tags = [],
         public ?string $url = null,
-    )
-    {
+    ) {
         //
     }
 

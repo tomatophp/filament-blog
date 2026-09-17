@@ -2,9 +2,8 @@
 
 namespace TomatoPHP\FilamentBlog\Filament\Resources\CommentResource\Pages;
 
-use TomatoPHP\FilamentBlog\Filament\Resources\CommentResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
+use TomatoPHP\FilamentBlog\Filament\Resources\CommentResource;
 
 class ManageComments extends ManageRecords
 {

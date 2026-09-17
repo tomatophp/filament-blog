@@ -14,8 +14,7 @@ class SocailIcon extends Component
     public function __construct(
         public ?string $icon = null,
         public ?string $url = null,
-    )
-    {
+    ) {
         //
     }
 

@@ -3,33 +3,47 @@
 namespace TomatoPHP\FilamentBlog\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
+use TomatoPHP\FilamentCms\Models\Post;
 
 abstract class Controller
 {
-    public function applyFilter(Builder $query,string $key='category'): Builder
+    /**
+     * Published posts of the given type.
+     */
+    protected function published(string $type): Builder
     {
-        if(request()->has('search') && !empty('search')){
-            $query
-                ->where('slug', 'like', '%'.request()->search.'%');
+        return Post::query()
+            ->where('type', $type)
+            ->where('is_published', true);
+    }
+
+    /**
+     * A published post of the given type by slug, counting the view.
+     */
+    protected function findPublished(string $type, string $slug): Post
+    {
+        /** @var Post $post */
+        $post = $this->published($type)->where('slug', $slug)->firstOrFail();
+
+        $post->increment('views');
+
+        return $post;
+    }
+
+    public function applyFilter(Builder $query, string $key = 'category'): Builder
+    {
+        if (request()->filled('search')) {
+            $query->where('slug', 'like', '%'.request()->string('search').'%');
         }
 
-        if(request()->has('sort') && !empty('sort')){
-            if(request()->get('sort') === 'popular'){
-                $query->orderBy('views', 'desc');
-            }
-            elseif (request()->get('sort') === 'recent'){
-                $query->orderBy('created_at', 'desc');
-            }
-            elseif (request()->get('sort') === 'alphabetical'){
-                $query->orderBy('title');
-            }
-            else {
-                $query->orderBy('created_at', 'desc');
-            }
-        }
+        match (request()->get('sort')) {
+            'popular' => $query->orderByDesc('views'),
+            'alphabetical' => $query->orderBy('slug'),
+            default => $query->orderByDesc('created_at'),
+        };
 
-        if(request()->has($key) && !empty($key)){
-            $query->whereHas('categories', function ($query) use ($key){
+        if (request()->filled($key)) {
+            $query->whereHas('categories', function (Builder $query) use ($key) {
                 $query->where('slug', request()->get($key));
             });
         }

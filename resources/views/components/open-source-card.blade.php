@@ -1,6 +1,6 @@
 <div class="flex flex-col justify-start py-4 text-black dark:text-gray-200">
     <div>
-        <a href="{{ url( app()->getLocale() .'/open-source/'. $post->slug ) }}" class="text-main underline font-bold text-lg">
+        <a href="{{ \TomatoPHP\FilamentBlog\FilamentBlog::url('open-source/' . $post->slug) }}" class="text-main underline font-bold text-lg">
             {{ $post->title }}
         </a>
     </div>
@@ -21,7 +21,7 @@
                 <x-icon name="bx-git-repo-forked" class="w-4 h-4 text-success-500"/>
             </div>
             <div>
-                {{ number_format($post->meta('github_forks')) ?? 0 }}
+                {{ number_format((float) $post->meta('github_forks')) }}
             </div>
         </div>
         <div class="font-bold text-2xl" style="line-height: 0.5;">.</div>
@@ -30,7 +30,7 @@
                 <x-icon name="bxs-star" class="w-4 h-4 text-warning-500"/>
             </div>
             <div>
-                {{ number_format($post->meta('github_starts'))??0 }}
+                {{ number_format((float) $post->meta('github_starts')) }}
             </div>
         </div>
         @if($post->meta('downloads_total'))
@@ -40,7 +40,7 @@
                     <x-icon name="bxs-download" class="w-4 h-4 text-success-500"/>
                 </div>
                 <div>
-                    {{ number_format($post->meta('downloads_total'))??0 }}
+                    {{ number_format((float) $post->meta('downloads_total')) }}
                 </div>
             </div>
         @endif

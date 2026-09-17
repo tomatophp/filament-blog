@@ -29,16 +29,11 @@
 
             <x-cms-social-share />
             <div>
-                @livewire(\Modules\Cms\Livewire\LikePost::class, ['post' => $docs])
+                @livewire(\TomatoPHP\FilamentBlog\Livewire\LikePost::class, ['post' => $page])
             </div>
         </section>
     </div>
 @endsection
-
-
-@push('css')
-    <link rel="stylesheet" href="{{ asset('css/code/github-dark.min.css') }}">
-@endpush
 
 @push('js')
     <script src="{{ asset('js/highlight.min.js') }}"></script>

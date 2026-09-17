@@ -1,4 +1,4 @@
-<a href="{{ url(app()->getLocale() .'/'. $url) }}" class="group mx-4 relative block h-64 sm:h-80 lg:h-96">
+<a href="{{ \TomatoPHP\FilamentBlog\FilamentBlog::url((string) $url) }}" class="group mx-4 relative block h-64 sm:h-80 lg:h-96">
     <span class="absolute inset-0 border-2 rounded-lg border-dashed border-black dark:border-slate-800"></span>
 
     <div

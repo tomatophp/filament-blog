@@ -2,42 +2,21 @@
 
 namespace TomatoPHP\FilamentBlog\Http\Controllers;
 
-use Illuminate\Http\Request;
-use TomatoPHP\FilamentCms\Models\Post;
+use Illuminate\Contracts\View\View;
 
 class OpenSourceController extends Controller
 {
-    public function index(Request $request)
+    public function index(): View
     {
-        $openSources = Post::query()
-            ->where('type', 'open-source')
-            ->where('is_published', 1);
-
-        $openSources = $this->applyFilter($openSources);
-
-        $openSources = $openSources->paginate(12);
         return view('filament-blog::open-source.index', [
-            'openSources' => $openSources
+            'openSources' => $this->applyFilter($this->published('open-source'))->paginate(12),
         ]);
     }
 
-    public function show($docs)
+    public function show(string $docs): View
     {
-        $docs = Post::query()
-            ->where('slug', $docs)
-            ->first();
-
-        if($docs){
-            $docs->views += 1;
-            $docs->save();
-
-            return view('filament-blog::open-source.show', [
-                "docs" => $docs
-            ]);
-        }
-        else {
-            abort(404);
-        }
-
+        return view('filament-blog::open-source.show', [
+            'docs' => $this->findPublished('open-source', $docs),
+        ]);
     }
 }

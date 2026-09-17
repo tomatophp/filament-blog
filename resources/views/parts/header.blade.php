@@ -1,7 +1,7 @@
 <header class="sticky top-0 z-40 flex-none mx-auto w-full bg-white md:bg-white/90 dark:bg-slate-950 dark:md:bg-slate-950/90 md:backdrop-blur-sm border-b dark:border-b-0">
     <div class="py-3 px-3 mx-auto w-full md:flex md:justify-between max-w-6xl md:px-4">
         <div class="flex justify-between">
-            <a class="flex items-center" href="{{ url(app()->getLocale()) }}">
+            <a class="flex items-center" href="{{ \TomatoPHP\FilamentBlog\FilamentBlog::url() }}">
                 <span class="self-center ml-2 text-2xl font-extrabold text-gray-900 whitespace-nowrap dark:text-white">
                     {{ trans('filament-blog::messages.emoji') }}
                 </span>
@@ -13,16 +13,16 @@
                             <x-icon name="heroicon-s-moon" class="w-5 h-5 hidden" id="dark-mode-moon-min" />
                             <x-icon name="heroicon-s-sun" class="w-5 h-5" id="dark-mode-sun-min" />
                         </button>
-                        @if(str(url()->current())->contains(url('/en')) || str(url()->current())->contains(url('/ar')))
-                            <a href="{{ app()->getLocale() === 'en' ? str(url()->current())->replaceFirst('/en', '/ar') : str(url()->current())->replaceFirst('/ar', '/en') }}" aria-label="Switch Language" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center">
+                        @if($switchLocaleUrl = \TomatoPHP\FilamentBlog\FilamentBlog::localeSwitchUrl())
+                            <a href="{{ $switchLocaleUrl }}" aria-label="Switch Language" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center">
                                 <x-icon name="heroicon-s-language" class="w-5 h-5" />
                             </a>
                         @endif
 
-                        <a href="{{ url(app()->getLocale() . '/contact') }}" aria-label="Contact" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center">
+                        <a href="{{ \TomatoPHP\FilamentBlog\FilamentBlog::url('contact') }}" aria-label="Contact" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center">
                             <x-icon name="bxs-envelope" class="w-5 h-5" />
                         </a>
-                        @if(auth('accounts')->user())
+                        @if(\TomatoPHP\FilamentBlog\FilamentBlog::account())
                             <div class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center transition">
                                 <x-cms-user-menu />
                             </div>
@@ -44,15 +44,15 @@
                             <x-icon name="heroicon-s-moon" class="w-5 h-5 hidden" id="dark-mode-moon" />
                             <x-icon name="heroicon-s-sun" class="w-5 h-5" id="dark-mode-sun" />
                         </button>
-                        @if(str(url()->current())->contains(url('/en')) || str(url()->current())->contains(url('/ar')))
-                            <a href="{{ app()->getLocale() === 'en' ? str(url()->current())->replaceFirst('/en', '/ar') : str(url()->current())->replaceFirst('/ar', '/en') }}" aria-label="Switch Language" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center">
+                        @if($switchLocaleUrl = \TomatoPHP\FilamentBlog\FilamentBlog::localeSwitchUrl())
+                            <a href="{{ $switchLocaleUrl }}" aria-label="Switch Language" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center">
                                 <x-icon name="heroicon-s-language" class="w-5 h-5" />
                             </a>
                         @endif
-                        <a href="{{ url(app()->getLocale() . '/contact') }}"  aria-label="Contact" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center">
+                        <a href="{{ \TomatoPHP\FilamentBlog\FilamentBlog::url('contact') }}"  aria-label="Contact" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center">
                             <x-icon name="bxs-envelope" class="w-5 h-5" />
                         </a>
-                        @if(auth('accounts')->user())
+                        @if(\TomatoPHP\FilamentBlog\FilamentBlog::account())
                             <div class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center">
                                 <x-cms-user-menu />
                             </div>

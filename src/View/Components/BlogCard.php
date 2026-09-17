@@ -21,8 +21,7 @@ class BlogCard extends Component
         public ?array $tags = [],
         public ?string $url = null,
         public ?string $date = null,
-    )
-    {
+    ) {
         //
     }
 

@@ -47,6 +47,6 @@
 </style>
 @livewireStyles
 @filamentStyles
-@vite('resources/css/app.css')
+{{ \TomatoPHP\FilamentBlog\FilamentBlog::vite() }}
 @stack('css')
 
